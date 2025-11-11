@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - ParkTem</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="hamburger-menu" id="hamburgerMenu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="location-display">
+            <span class="location-icon">📍</span>
+            <span class="location-text">Downtown Parking Lot</span>
+        </div>
+        <h1>Parking Slot Viewer</h1>
+        <div class="header-controls">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search slots...">
+                <select id="filterSelect">
+                    <option value="all">All Slots</option>
+                    <option value="available">Available Only</option>
+                    <option value="occupied">Occupied Only</option>
+                </select>
+            </div>
+            <div class="theme-toggle">
+                <label class="switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="slider"></span>
+                </label>
+                <span id="themeLabel">Light Mode</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hamburger Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay">
+        <div class="menu-content">
+            <div class="menu-header">
+                <h3>Menu</h3>
+                <button class="close-menu" id="closeMenu">&times;</button>
+            </div>
+            <nav class="menu-nav">
+                <a href="#" class="menu-item active" id="dashboardLink">
+                    <span class="menu-icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="#" class="menu-item" id="preBookingLink">
+                    <span class="menu-icon">📅</span>
+                    Pre-Booking
+                </a>
+                <a href="#" class="menu-item" id="preBookingsLink">
+                    <span class="menu-icon">📋</span>
+                    My Pre-Bookings
+                </a>
+                <a href="#" class="menu-item" id="settingsLink">
+                    <span class="menu-icon">⚙️</span>
+                    Settings
+                </a>
+                <a href="#" class="menu-item" id="logoutLink">
+                    <span class="menu-icon">🚪</span>
+                    Logout
+                </a>
+            </nav>
+        </div>
+    </div>
+    <main>
+        <div class="user-dashboard">
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <h3>Available Slots</h3>
+                    <span id="availableCount">10</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Occupied Slots</h3>
+                    <span id="occupiedCount">0</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Slots</h3>
+                    <span id="totalCount">10</span>
+                </div>
+            </div>
+
+            <div class="slots-section">
+                <h2>Parking Slots</h2>
+                <div class="slots-container" id="slotsContainer">
+                    <!-- Slots will be dynamically created -->
+                </div>
+            </div>
+
+            <div class="slot-details" id="slotDetails">
+                <h3>Slot Information</h3>
+                <p id="detailsText">Click on a slot to view details</p>
+            </div>
+
+            <div class="pre-bookings-section" id="preBookingsSection">
+                <h2>My Pre-Bookings</h2>
+                <div class="pre-bookings-container" id="preBookingsContainer">
+                    <!-- Pre-bookings will be dynamically created -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Pre-Booking Modal -->
+    <div id="preBookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Pre-Book Parking Slot</h3>
+                <span class="close-modal" id="closePreBookingModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="booking-form">
+                    <div class="form-group">
+                        <label for="bookingSlot">Select Slot:</label>
+                        <select id="bookingSlot" required>
+                            <option value="">Choose a slot...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookingDate">Booking Date:</label>
+                        <input type="date" id="bookingDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookingTime">Booking Time:</label>
+                        <input type="time" id="bookingTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="duration">Duration (hours):</label>
+                        <select id="duration" required>
+                            <option value="1">1 hour</option>
+                            <option value="2">2 hours</option>
+                            <option value="3">3 hours</option>
+                            <option value="4">4 hours</option>
+                            <option value="6">6 hours</option>
+                            <option value="8">8 hours</option>
+                            <option value="12">12 hours</option>
+                            <option value="24">24 hours</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="userName">Your Name:</label>
+                        <input type="text" id="userName" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userPhone">Phone Number:</label>
+                        <input type="tel" id="userPhone" placeholder="Enter phone number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">Email (optional):</label>
+                        <input type="email" id="userEmail" placeholder="Enter email">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="confirmBooking" class="btn-primary">Confirm Booking</button>
+                <button id="cancelBooking" class="btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="user.js"></script>
+</body>
+</html>

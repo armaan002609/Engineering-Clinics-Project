@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#7091E6">
+    <title>ParkTem - Parking Slot Manager</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon-192.png">
+    <script src="https://cdn.jsdelivr.net/npm/instascan@1.0.0/instascan.min.js"></script>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <h1>Welcome to ParkTem</h1>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Login View -->
+    <div id="loginView" class="view">
+        <div class="login-container">
+            <h1>Login to ParkTem</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="role">Role:</label>
+                    <select id="role" required>
+                        <option value="">Select Role</option>
+                        <option value="admin">Admin (Manage Parking Slots)</option>
+                        <option value="user">User (Find Parking Slots)</option>
+                    </select>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <button type="button" id="skipBtn">Skip Login</button>
+            <p id="errorMessage" style="color: red; display: none;">Invalid credentials. Please try again.</p>
+        </div>
+    </div>
+
+    <!-- User Dashboard View -->
+    <div id="userView" class="view" style="display: none;">
+        <header>
+            <div class="hamburger-menu" id="hamburgerMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="location-display">
+                <span class="location-icon">📍</span>
+                <span class="location-text">Downtown Parking Lot</span>
+            </div>
+            <h1>User Dashboard</h1>
+            <div class="header-controls">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search slots...">
+                    <select id="filterSelect">
+                        <option value="all">All Slots</option>
+                        <option value="available">Available Only</option>
+                        <option value="occupied">Occupied Only</option>
+                    </select>
+                </div>
+                <div class="theme-toggle">
+                    <label class="switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span id="themeLabel">Light Mode</span>
+                </div>
+                <button id="scanBtn" class="scan-btn">📱 Scan QR</button>
+            </div>
+        </header>
+
+        <!-- Hamburger Menu Overlay -->
+        <div class="menu-overlay" id="menuOverlay">
+            <div class="menu-content">
+                <div class="menu-header">
+                    <h3>Menu</h3>
+                    <button class="close-menu" id="closeMenu">&times;</button>
+                </div>
+                <button class="menu-back-btn" id="menuBackBtn">← Back</button>
+                <nav class="menu-nav">
+                    <a href="#" class="menu-item active" data-view="user" id="dashboardLink">
+                        <span class="menu-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="#" class="menu-item" data-view="preBooking" id="preBookingLink">
+                        <span class="menu-icon">📅</span>
+                        Pre-Booking
+                    </a>
+                    <a href="#" class="menu-item" data-view="userPreBookings" id="preBookingsLink">
+                        <span class="menu-icon">📋</span>
+                        My Pre-Bookings
+                    </a>
+                    <a href="#" class="menu-item" data-view="settings" id="settingsLink">
+                        <span class="menu-icon">⚙️</span>
+                        Settings
+                    </a>
+                    <a href="#" class="menu-item" data-action="logout" id="logoutLink">
+                        <span class="menu-icon">🚪</span>
+                        Logout
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <main>
+            <div class="user-dashboard">
+                <div class="stats-overview">
+                    <div class="stat-card">
+                        <h3>Available Slots</h3>
+                        <span id="availableCount">10</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Occupied Slots</h3>
+                        <span id="occupiedCount">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Slots</h3>
+                        <span id="totalCount">10</span>
+                    </div>
+                </div>
+
+                <div class="slots-section">
+                    <h2>Parking Slots</h2>
+                    <div class="slots-container" id="slotsContainer">
+                        <!-- Slots will be dynamically created -->
+                    </div>
+                </div>
+
+                <div class="slot-details" id="slotDetails">
+                    <h3>Slot Information</h3>
+                    <p id="detailsText">Click on a slot to view details</p>
+                </div>
+
+                <div class="pre-bookings-section" id="preBookingsSection" style="display: none;">
+                    <h2>My Pre-Bookings</h2>
+                    <div class="pre-bookings-container" id="preBookingsContainer">
+                        <!-- Pre-bookings will be dynamically created -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Pre-Booking Modal -->
+        <div id="preBookingModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Pre-Book Parking Slot</h3>
+                    <span class="close-modal" id="closePreBookingModal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="booking-form">
+                        <div class="form-group">
+                            <label for="bookingSlot">Select Slot:</label>
+                            <select id="bookingSlot" required>
+                                <option value="">Choose a slot...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookingDate">Booking Date:</label>
+                            <input type="date" id="bookingDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookingTime">Booking Time:</label>
+                            <input type="time" id="bookingTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">Duration (hours):</label>
+                            <select id="duration" required>
+                                <option value="1">1 hour</option>
+                                <option value="2">2 hours</option>
+                                <option value="3">3 hours</option>
+                                <option value="4">4 hours</option>
+                                <option value="6">6 hours</option>
+                                <option value="8">8 hours</option>
+                                <option value="12">12 hours</option>
+                                <option value="24">24 hours</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="userName">Your Name:</label>
+                            <input type="text" id="userName" placeholder="Enter your name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userPhone">Phone Number:</label>
+                            <input type="tel" id="userPhone" placeholder="Enter phone number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmail">Email (optional):</label>
+                            <input type="email" id="userEmail" placeholder="Enter email">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmBooking" class="btn-primary">Confirm Booking</button>
+                    <button id="cancelBooking" class="btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard View -->
+    <div id="adminView" class="view" style="display: none;">
+        <header>
+            <div class="hamburger-menu" id="adminHamburgerMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="location-display">
+                <span class="location-icon">📍</span>
+                <span class="location-text">Downtown Parking Lot</span>
+            </div>
+            <h1>Admin Dashboard</h1>
+            <div class="header-controls">
+                <button id="adminScanBtn" class="scan-btn">📱 Scan QR</button>
+                <div class="theme-toggle">
+                    <label class="switch">
+                        <input type="checkbox" id="adminDarkModeToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span id="adminThemeLabel">Light Mode</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hamburger Menu Overlay -->
+        <div class="menu-overlay" id="adminMenuOverlay">
+            <div class="menu-content">
+                <div class="menu-header">
+                    <h3>Menu</h3>
+                    <button class="close-menu" id="adminCloseMenu">&times;</button>
+                </div>
+                <nav class="menu-nav">
+                    <a href="#" class="admin-menu-item active" data-view="admin" id="adminDashboardLink">
+                        <span class="menu-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="#" class="admin-menu-item" data-view="adminPreBookings" id="adminPreBookingsLink">
+                        <span class="menu-icon">📅</span>
+                        Pre-bookings
+                    </a>
+                    <a href="#" class="admin-menu-item" data-view="adminSettings" id="adminSettingsLink">
+                        <span class="menu-icon">⚙️</span>
+                        Settings
+                    </a>
+                    <a href="#" class="admin-menu-item" data-action="logout" id="adminLogoutLink">
+                        <span class="menu-icon">🚪</span>
+                        Logout
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <main>
+            <div class="admin-dashboard">
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <h3>Total Slots</h3>
+                        <span id="totalSlots">10</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Available</h3>
+                        <span id="availableSlots">10</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Occupied</h3>
+                        <span id="occupiedSlots">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Occupancy Rate</h3>
+                        <span id="occupancyRate">0%</span>
+                    </div>
+                </div>
+
+                <div class="bulk-controls">
+                    <h2>Bulk Operations</h2>
+                    <div class="bulk-buttons">
+                        <button id="bookAllBtn">Book All Available</button>
+                        <button id="freeAllBtn">Free All Occupied</button>
+                        <button id="resetAllBtn">Reset All Slots</button>
+                    </div>
+                </div>
+
+                <div class="slot-management">
+                    <h2>Slot Management</h2>
+                    <div class="add-slots">
+                        <label for="slotCount">Number of Slots:</label>
+                        <input type="number" id="slotCount" min="1" max="500" value="0">
+                        <button id="addSlotsBtn">Add/Update Slots</button>
+                    </div>
+                    <div class="sort-controls">
+                        <label for="sortSelect">Sort by:</label>
+                        <select id="sortSelect">
+                            <option value="default">Default Order</option>
+                            <option value="available">Available First</option>
+                            <option value="occupied">Occupied First</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="individual-controls">
+                    <h2>Individual Slot Management</h2>
+                    <div class="slots-container" id="adminSlotsContainer">
+                        <!-- Slots will be added dynamically -->
+                    </div>
+                    <div class="controls">
+                        <button id="bookBtn">Book Selected Slot</button>
+                        <button id="freeBtn">Free Selected Slot</button>
+                    </div>
+                </div>
+
+                <div class="pre-bookings-section" id="adminPreBookingsSection" style="display: none;">
+                    <h2>Pre-bookings</h2>
+                    <div class="pre-bookings-container" id="adminPreBookingsContainer">
+                        <!-- Pre-bookings will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Pre-Booking View (for navigation) -->
+    <div id="preBookingView" class="view" style="display: none;">
+        <script>
+            // Automatically open pre-booking modal when this view is shown
+            document.addEventListener('viewChanged', (e) => {
+                if (e.detail.view === 'preBooking') {
+                    openPreBookingModal();
+                }
+            });
+        </script>
+    </div>
+
+    <!-- User Pre-Bookings View -->
+    <div id="userPreBookingsView" class="view" style="display: none;">
+        <header>
+            <h1>My Pre-Bookings</h1>
+            <button data-view="user" class="back-btn">← Back to Dashboard</button>
+        </header>
+        <main>
+            <div class="pre-bookings-container" id="fullPreBookingsContainer">
+                <!-- Pre-bookings will be displayed here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Admin Pre-Bookings View -->
+    <div id="adminPreBookingsView" class="view" style="display: none;">
+        <header>
+            <h1>Pre-bookings Management</h1>
+            <button data-view="admin" class="back-btn">← Back to Dashboard</button>
+        </header>
+        <main>
+            <div class="pre-bookings-container" id="fullAdminPreBookingsContainer">
+                <!-- Pre-bookings will be displayed here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Settings View -->
+    <div id="settingsView" class="view" style="display: none;">
+        <header>
+            <h1>Settings</h1>
+            <button data-view="user" class="back-btn">← Back</button>
+        </header>
+        <main>
+            <div class="settings-container">
+                <div class="setting-item">
+                    <h3>Theme</h3>
+                    <div class="theme-toggle">
+                        <label class="switch">
+                            <input type="checkbox" id="settingsDarkModeToggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span id="settingsThemeLabel">Light Mode</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <h3>About ParkTem</h3>
+                    <p>Version 1.0.0</p>
+                    <p>A Progressive Web App for parking slot management.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Admin Settings View -->
+    <div id="adminSettingsView" class="view" style="display: none;">
+        <header>
+            <h1>Admin Settings</h1>
+            <button data-view="admin" class="back-btn">← Back</button>
+        </header>
+        <main>
+            <div class="settings-container">
+                <div class="setting-item">
+                    <h3>Theme</h3>
+                    <div class="theme-toggle">
+                        <label class="switch">
+                            <input type="checkbox" id="adminSettingsDarkModeToggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span id="adminSettingsThemeLabel">Light Mode</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <h3>System Information</h3>
+                    <p>ParkTem Admin Panel</p>
+                    <p>Manage parking slots and pre-bookings</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- QR Scanner Modal -->
+    <div id="qrScannerModal" class="modal">
+        <div class="modal-content scanner-modal">
+            <div class="modal-header">
+                <h3>Scan QR Code</h3>
+                <span class="close-modal" id="closeQrScannerModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <video id="qrVideo" autoplay playsinline></video>
+                <p id="qrResult">Point your camera at a QR code</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

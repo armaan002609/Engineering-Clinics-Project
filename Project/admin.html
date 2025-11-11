@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ParkTem</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="hamburger-menu" id="hamburgerMenu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="location-display">
+            <span class="location-icon">📍</span>
+            <span class="location-text">Downtown Parking Lot</span>
+        </div>
+        <h1>Admin Dashboard</h1>
+        <div class="header-controls">
+            <div class="theme-toggle">
+                <label class="switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="slider"></span>
+                </label>
+                <span id="themeLabel">Light Mode</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hamburger Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay">
+        <div class="menu-content">
+            <div class="menu-header">
+                <h3>Menu</h3>
+                <button class="close-menu" id="closeMenu">&times;</button>
+            </div>
+            <nav class="menu-nav">
+                <a href="#" class="menu-item active" id="dashboardLink">
+                    <span class="menu-icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="#" class="menu-item" id="preBookingsLink">
+                    <span class="menu-icon">📅</span>
+                    Pre-bookings
+                </a>
+                <a href="#" class="menu-item" id="settingsLink">
+                    <span class="menu-icon">⚙️</span>
+                    Settings
+                </a>
+                <a href="#" class="menu-item" id="logoutLink">
+                    <span class="menu-icon">🚪</span>
+                    Logout
+                </a>
+            </nav>
+        </div>
+    </div>
+    <main>
+        <div class="admin-dashboard">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Total Slots</h3>
+                    <span id="totalSlots">10</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Available</h3>
+                    <span id="availableSlots">10</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Occupied</h3>
+                    <span id="occupiedSlots">0</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Occupancy Rate</h3>
+                    <span id="occupancyRate">0%</span>
+                </div>
+            </div>
+
+            <div class="bulk-controls">
+                <h2>Bulk Operations</h2>
+                <div class="bulk-buttons">
+                    <button id="bookAllBtn">Book All Available</button>
+                    <button id="freeAllBtn">Free All Occupied</button>
+                    <button id="resetAllBtn">Reset All Slots</button>
+                </div>
+            </div>
+
+            <div class="slot-management">
+                <h2>Slot Management</h2>
+                <div class="add-slots">
+                    <label for="slotCount">Number of Slots:</label>
+                    <input type="number" id="slotCount" min="1" max="500" value="0">
+                    <button id="addSlotsBtn">Add/Update Slots</button>
+                </div>
+                <div class="sort-controls">
+                    <label for="sortSelect">Sort by:</label>
+                    <select id="sortSelect">
+                        <option value="default">Default Order</option>
+                        <option value="available">Available First</option>
+                        <option value="occupied">Occupied First</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="individual-controls">
+                <h2>Individual Slot Management</h2>
+                <div class="slots-container" id="slotsContainer">
+                    <!-- Slots will be added dynamically -->
+                </div>
+                <div class="controls">
+                    <button id="bookBtn">Book Selected Slot</button>
+                    <button id="freeBtn">Free Selected Slot</button>
+                </div>
+            </div>
+
+            <div class="pre-bookings-section" id="preBookingsSection" style="display: none;">
+                <h2>Pre-bookings</h2>
+                <div class="pre-bookings-container" id="preBookingsContainer">
+                    <!-- Pre-bookings will be displayed here -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+    <script src="admin.js"></script>
+</body>
+</html>
